@@ -5,20 +5,33 @@
 * Btrees are efficient in retrieving values from given keys.
 
 ## Usage:
-* Micropython datatypes like: int, str, list, tuple, set, dict, bytes, bytearray, bool can be used both as keys and values for the database.
-* brainDB is compatible with any device running MicroPython with btree module in it like: ESP8266, ESP32, Unix etc.
+* Micropython datatypes like: **int, str, list, tuple, set, dict, bytes, bytearray, bool** can be used both as keys and values for the database.
+* brainDB is compatible with any device running MicroPython with btree module in it like: **ESP8266, ESP32, Unix etc.**
 
 ## Examples:
 ```python
 from brainDB import brainDB as DB
 
-db_name1 = DB("name1")
-db_name1.write(0, [i for i in range(100)])
-db_name1.read(0)
+some_list = [i for i in range(100)]
+# if verbose is set to 1, it displays information while writing
+db_name1 = DB("name1", verbose=1) 
+db_name1.write(key=0, value=some_list)
+db_name1.read(key=0)
+
+db_name1.write("abc", (5, 10, 15, 20, 25))
+db_name1.read("abc")
 
 db_name2 = DB("name2")
-db_name2.write({3:2, 1:5}, "myValue")
-db_name2.read({3:2, 1:5})
+db_name2.write({3, 4, 5, 6}, "myValue")
+db_name2.read({3, 4, 5, 6})
+
+some_dict = {
+    "something":"something more",
+    7:[0, 1, 2]
+}
+db_name3 = DB("name3")
+db_name3.write(key=some_dict, value="oopsydoopsy")
+db_name3.read(some_dict)
 ```
 
 ## Note:

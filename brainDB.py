@@ -10,7 +10,7 @@ import btree
 import gc
 
 # Set a name for the database folder.
-DB_FOLDER = "/DB"
+DB_FOLDER = "./DB"
 
 # Try to make the database folder if it doesn't exist.
 try:
@@ -22,11 +22,12 @@ except OSError as exc:
 
 
 class brainDB:
-    # Define init function, collect garbage with gc.collect(), set the database name,
-    # and call self._initialize() function.
-    def __init__(self, name):
+    # Init function collects garbage with gc.collect(), sets the database name,
+    # sets verbose and calls self._initialize() function.
+    def __init__(self, name, verbose=None):
         gc.collect()
         self._name = name
+        self._verbose = verbose
         self._initialize()
 
     # This function will try to open the database.
@@ -64,7 +65,8 @@ class brainDB:
                 self._db[b"{}".format(key)] = b"{}".format(value)
                 self._db.flush()
                 gc.collect()
-                return "Value stored in database: '{}' with type: {}, key: '{}'".format(self._name, type(value), key)
+                if self._verbose == 1:
+                    return "Value stored in database: '{}' with type: {}, key: '{}'".format(self._name, type(value), key)
         except OSError:
             self._db.flush()
             return "Something went wrong while writing to '{}'".format(self._name)
