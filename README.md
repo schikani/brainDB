@@ -1,11 +1,12 @@
 # brainDB
 
 ## About:
-* This project is based on the btree module from MicroPyton which is based on BerkelyDB library
-* Btrees are efficient in retrieving values by given keys.
+* This project is based on the btree module from [MicroPython](https://github.com/micropython/micropython) which is based on [BerkelyDB](https://www.oracle.com/database/technologies/related/berkeleydb.html) library.
+* Btrees are efficient in retrieving values from given keys.
 
 ## Usage:
 * Micropython datatypes like: int, str, list, tuple, set, dict, bytes, bytearray, bool can be used both as keys and values for the database.
+* brainDB is compatible with any device running MicroPython with btree module in it like: ESP8266, ESP32, Unix etc.
 
 ## Examples:
 ```python
