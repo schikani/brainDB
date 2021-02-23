@@ -33,6 +33,10 @@ some_dict = {
 db_name3 = DB("name3")
 db_name3.write(key=some_dict, value="oopsydoopsy")
 db_name3.read(some_dict)
+
+db_name1.close()
+db_name2.close()
+db_name3.close()
 ```
 
 ## Note:
