@@ -1,5 +1,5 @@
 # brainDB
-###### ![alt text](https://github.com/schikani/brainDB/blob/main/brainDB.png)
+![alt text](https://github.com/schikani/brainDB/blob/main/brainDB.png)
 
 ## About:
 * This project is based on the btree module from [MicroPython](https://github.com/micropython/micropython) which is based on [BerkelyDB](https://www.oracle.com/database/technologies/related/berkeleydb.html) library.
