@@ -5,8 +5,7 @@
 * Btrees are efficient in retrieving values by given keys.
 
 ## Usage:
-* Micropython datatypes like: int, str, list, tuple, set, dict, bytes, bytearray, bool
-* can be used both as keys and values for the database.
+* Micropython datatypes like: int, str, list, tuple, set, dict, bytes, bytearray, bool can be used both as keys and values for the database.
 
 ## Examples:
 ```python
