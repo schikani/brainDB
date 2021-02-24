@@ -58,7 +58,6 @@ print(features_with_label_one)
 # Case 2 - For ESP8266 /  ESP32 auto connections
 # ------------------------------------------------
 
-import network
 from brainDB import brainDB as DB
 
 credentials = DB("credentials")
