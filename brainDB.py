@@ -27,8 +27,12 @@ class brainDB:
     def __init__(self, name, verbose=None):
         gc.collect()
         self._name = name
-        self._verbose = verbose
         self._initialize()
+        self._verbose = verbose
+
+    def verbose(self, value):
+        if value > 0:
+            self._verbose = 1
 
     # This function will try to open the database.
     def _initialize(self):
@@ -46,7 +50,8 @@ class brainDB:
             try:
                 data_to_return = eval(dataB)
             except NameError:
-                # Check if the data is type: str, decode() will decode from bytes to str
+                # Check if the data is type str
+                # decode() will decode from bytes to str
                 data_to_return = dataB.decode()
 
             gc.collect()
@@ -62,14 +67,126 @@ class brainDB:
     def write(self, key, value):
         try:
             if self._db is not None:
-                self._db[b"{}".format(key)] = b"{}".format(value)
-                self._db.flush()
-                gc.collect()
+                if b"{}".format(key) in self._db.keys():
+                    n = self._if_same_keys(key=b"{}".format(key))
+                    self._db[b"({},{})".format(key, n)] = b"{}".format(value)
+                    self._db.flush()
+
+                else:
+                    self._db[b"{}".format(key)] = b"{}".format(value)
+                    self._db.flush()
+
                 if self._verbose == 1:
-                    return "Value stored in database: '{}' with type: {}, key: '{}'".format(self._name, type(value), key)
+                    return "Value stored in database: '{}' with type: {}, key: '{}'" \
+                        .format(self._name, type(value), key)
+
+                gc.collect()
+
         except OSError:
             self._db.flush()
             return "Something went wrong while writing to '{}'".format(self._name)
+
+    def _if_same_keys(self, key):
+
+        try:
+            _stream = open("{}/.same_keys-{}".format(DB_FOLDER, self._name), "r+b")
+
+        except OSError:
+            _stream = open("{}/.same_keys-{}".format(DB_FOLDER, self._name), "w+b")
+
+        _db = btree.open(_stream)
+
+        try:
+            value = _db[key]
+            n = eval(_db[key]) + 1
+            _db[key] = b"{}".format(n)
+            _db.flush()
+
+        except KeyError:
+            n = 0
+            _db[key] = b"0"
+            _db.flush()
+
+        _db.close()
+        _stream.close()
+
+        return n
+
+    # Iterate over sorted keys in the database getting sorted keys in a list
+    def keys_sorted(self):
+
+        sorted_list = []
+
+        for k in self._db:
+            try:
+                sorted_list.append(eval(k))
+            except NameError:
+                sorted_list.append(k.decode())
+
+        gc.collect()
+        return sorted_list
+
+    # Iterate over sorted keys in the database, starting
+    # from the given key as parameter until the end of the database,
+    # returning only values.
+    # Mind that arguments passed to values_sorted() method are *key* values.
+    def values_sorted(self, key):
+
+        sorted_values = []
+
+        for v in self._db.values(b"{}".format(key)):
+            try:
+                sorted_values.append(eval(v))
+
+            except NameError:
+                sorted_values.append(v.decode())
+
+        gc.collect()
+        return sorted_values
+
+    # Remove a key-value pair/s given the key or value as the parameter
+    def remove(self, key=None, value=None):
+
+        if key is not None:
+            try:
+                del self._db[b"{}".format(key)]
+                self._db.flush()
+
+                if self._verbose == 1:
+                    print("Removing Key: '{}'".format(key))
+
+            except KeyError:
+                return 'Invalid key!'
+
+            gc.collect()
+
+        elif value is not None:
+
+            keys_found = 0
+
+            for key_, value_ in self._db.items():
+                if value_ == b"{}".format(value):
+                    keys_found = 1
+                    del self._db[key_]
+                    self._db.flush()
+                    gc.collect()
+
+                    if self._verbose == 1:
+                        try:
+                            print("Removing Key: '{}' by the given Value: '{}'".format(eval(key_), value))
+
+                        except NameError:
+                            print("Removing Key: '{}' by the given Value: '{}'".format(key_.decode(), value))
+
+            if keys_found == 0:
+                return "No keys found with Value: '{}'".format(value)
+
+        else:
+            return "Enter a key or value to remove key-value pair/s."
+
+    # To be implemented
+    def count(self, key=None, value=None):
+        pass
 
     # This function helps in closing the current stream.
     # After calling this function, calling read() / write() functions will cause an OSError
