@@ -31,7 +31,7 @@
 ## Examples:
 ```python
 # ------------------------------------------------
-# Case 1 - Storing 2D / multi-dimensional Arrays
+# Storing 2D / multi-dimensional Arrays
 # ------------------------------------------------
 
 from brainDB import brainDB as DB
@@ -49,13 +49,14 @@ labels = [1, 1, 0]
 for f, l in zip(features, labels):
     database1.write(f, l)
 
-
 features_with_label_one = database1.read(value=1)
 print(features_with_label_one)
 
+database1.close()
+
 
 # ------------------------------------------------
-# Case 2 - For ESP8266 /  ESP32 auto connections
+# For ESP8266 /  ESP32 auto connections
 # ------------------------------------------------
 
 from brainDB import brainDB as DB
@@ -70,39 +71,40 @@ credentials.write(key="ssid4", value="password4")
 credentials.write(key="ssid45", value="password45")
 credentials.write(key="ssid60", value="password60")
 
+credentials.close()
 
 #  ----------Some time later--------------
 
 # Network connection 
 def do_connect():
-	import network
-	from brainDB import brainDB as DB
-	
-	credentials = DB("credentials")
-	
+  
+    import network
+    from brainDB import brainDB as DB
+    
+    credentials = DB("credentials")
+    
     sta_if = network.WLAN(network.STA_IF)
-	
+    
     if not sta_if.isconnected():
-		
+        
         # Get keys and values as bytes objects in a dictionary
         dict_B = credentials.get_items()
-		
+        
         print('connecting to network...')
         sta_if.active(True)
-		
+        
         for netw in sta_if.scan():
             # catch ssid from index 0 and
-			# compare it with the dictionary keys
+            # compare it with the dictionary keys
             if netw[0] in dict_B.keys():
                 sta_if.connect(netw[0], dict_B[netw[0]])
-
+  
         while not sta_if.isconnected():
             pass
+        credentials.close()
         print('network config:', sta_if.ifconfig())
 		
 do_connect()
-
-
 ```
 <br>
 
