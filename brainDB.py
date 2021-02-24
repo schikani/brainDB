@@ -35,7 +35,6 @@ class brainDB:
     # This function will try to open the database and save it's name
     # in DB_NAMES file
     def _initialize(self):
-
         try:
             self._db_names_stream = open("{}/{}".format(DB_FOLDER, DB_NAMES), "r+b")
         except OSError:
@@ -44,7 +43,6 @@ class brainDB:
         self._db_names = btree.open(self._db_names_stream)
         self._db_names[str(self._name).encode()] = str(self._name).encode()
         self._db_names.flush()
-
 
         try:
             self._stream = open("{}/{}".format(DB_FOLDER, self._name), "r+b")
@@ -253,6 +251,7 @@ class brainDB:
     # Optionally start_key param accepts a key
     # The keys and values are stored as bytes objects
     def get_items(self, start_key=None):
+
         items = {}
 
         if start_key is not None:
@@ -262,7 +261,6 @@ class brainDB:
         else:
             for k, v in self._db.items():
                 items[k] = v
-
 
         return items
 
