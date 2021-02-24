@@ -30,8 +30,6 @@ class brainDB:
         gc.collect()
         self._name = name
         self._verbose = 0
-        # Create a tuple of db name for adding it later in _initialize()
-        self._dbID = (self._name, self._name)
         self._initialize()
 
     # This function will try to open the database and save it's name
