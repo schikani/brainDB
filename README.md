@@ -75,12 +75,13 @@ credentials.close()
 
 #  ----------Some time later--------------
 
-# Network connection 
+# Network connection
+
+import network
+from brainDB import brainDB as DB
+
 def do_connect():
   
-    import network
-    from brainDB import brainDB as DB
-    
     credentials = DB("credentials")
     
     sta_if = network.WLAN(network.STA_IF)
