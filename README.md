@@ -106,7 +106,3 @@ def do_connect():
 		
 do_connect()
 ```
-<br>
-
-## Note:
-* It is better to distribute the values with more keys **OR**, distribute data across different databases. This can prevent file corruption.
