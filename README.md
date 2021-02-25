@@ -20,7 +20,6 @@
 |Get the names of all the databases in a list|`db.databases()`|
 |Set verbose (default is set to 0)<br>If set to 1, it displays information while writing / removing in the database|`db.verbose(1)`|
 |Write key - value pairs to the current database. The first argument is key and second is value|`db.write({777}, 0.12)`<br>`db.write([1, 1, 0], 1)`<br>`db.write(0, "zero")`<br>`db.write("abc", "xyz")`<br>`db.write([0.1, 0.6, 0.8], 1)`|
-||`db.get_items()`|
 |Read value by given key or read key/s by given value|`db.read("abc")`<br>`db.read(value="xyz")`<br>`db.read([0.1, 0.6, 0.8])`<br>`db.read(value=1)`|
 |Remove key - value pairs by giving key or value|`db.remove({777})`<br>`db.remove(value=0.12)`|
 |Get sorted keys (Optionally from specified key)<br>Also reverse can be set to True to get the list in reverse order|`db.sorted_keys()`<br>`db.sorted_keys("abc")`<br>`db.sorted_keys("abc", reverse=True)`|
