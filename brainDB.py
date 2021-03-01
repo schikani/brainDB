@@ -250,7 +250,7 @@ class brainDB:
     # Get all encoded key - value pairs in a dictionary.
     # Optionally start_key param accepts a key
     # The keys and values are stored as bytes objects
-    def get_items(self, start_key=None):
+    def items(self, start_key=None):
 
         items = {}
 

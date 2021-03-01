@@ -24,7 +24,7 @@
 |Remove key - value pairs by giving key or value|`db.remove({777})`<br>`db.remove(value=0.12)`|
 |Get sorted keys (Optionally from specified key)<br>Also reverse can be set to True to get the list in reverse order|`db.keys()`<br>`db.keys("abc")`<br>`db.keys("abc", reverse=True)`|
 |Get sorted values (Optionally from specified key)<br>Also reverse can be set to True to get the list in reverse order|`db.values()`<br>`db.values([1, 1, 0])`<br>`db.values([1, 1, 0], reverse=True)`|
-|Get a dictionary with key - value pairs as bytes objects (Optionally from specified key)|`db.get_items()`|
+|Get a dictionary with key - value pairs as bytes objects (Optionally from specified key)|`db.items()`|
 |Close the current database<br>Methods will not work after invoking this function|`db.close()`|
 
 ## Examples:
@@ -88,7 +88,7 @@ def do_connect():
     if not sta_if.isconnected():
         
         # Get keys and values as bytes objects in a dictionary
-        dict_B = credentials.get_items()
+        dict_B = credentials.items()
         
         print('connecting to network...')
         sta_if.active(True)
