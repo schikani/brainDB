@@ -186,65 +186,65 @@ class brainDB:
     # If key is given as start_key parameter, the keys after the key (including the given key)
     # to the end of database is returned as a sorted list
     # if reverse is set True, the list is returned in reverse order
-    def sorted_keys(self, start_key=None, reverse=False):
+    def keys(self, start_key=None, reverse=False):
 
-        sorted_keys = []
+        keys = []
 
         if start_key is not None:
             for k in self._db.keys(str(start_key).encode()):
                 try:
-                    sorted_keys.append(eval(k))
+                    keys.append(eval(k))
                 except NameError:
-                    sorted_keys.append(k.decode())
+                    keys.append(k.decode())
                 except SyntaxError:
-                    sorted_keys.append(k.decode())
+                    keys.append(k.decode())
         else:
             for k in self._db.keys():
                 try:
-                    sorted_keys.append(eval(k))
+                    keys.append(eval(k))
                 except NameError:
-                    sorted_keys.append(k.decode())
+                    keys.append(k.decode())
                 except SyntaxError:
-                    sorted_keys.append(k.decode())
+                    keys.append(k.decode())
 
         gc.collect()
         if reverse:
-            sorted_keys.reverse()
+            keys.reverse()
 
-        return sorted_keys
+        return keys
 
 
     # Iterate over sorted keys in the database getting sorted values in a list
     # If key is given as start_key parameter, the values after the value (including the value of given key)
     # to the end of database is returned as a sorted list
     # if reverse is set True, the list is returned in reverse order
-    def sorted_values(self, start_key=None, reverse=False):
+    def values(self, start_key=None, reverse=False):
 
-        sorted_values = []
+        values = []
 
         if start_key is not None:
             for v in self._db.values(str(start_key).encode()):
                 try:
-                    sorted_values.append(eval(v))
+                    values.append(eval(v))
                 except NameError:
-                    sorted_values.append(v.decode())
+                    values.append(v.decode())
                 except SyntaxError:
-                    sorted_values.append(v.decode())
+                    values.append(v.decode())
 
         else:
             for v in self._db.values():
                 try:
-                    sorted_values.append(eval(v))
+                    values.append(eval(v))
                 except NameError:
-                    sorted_values.append(v.decode())
+                    values.append(v.decode())
                 except SyntaxError:
-                    sorted_values.append(v.decode())
+                    values.append(v.decode())
 
         gc.collect()
         if reverse:
-            sorted_values.reverse()
+            values.reverse()
 
-        return sorted_values
+        return values
 
 
     # Get all encoded key - value pairs in a dictionary.
