@@ -1,14 +1,16 @@
-# brainDB 
+# brainDB (beta)
 ![alt text](https://github.com/schikani/brainDB/blob/main/brainDB.png)
 
 ## About:
 * This project is based on the btree module from [MicroPython](https://github.com/micropython/micropython) which is based on [BerkelyDB](https://www.oracle.com/database/technologies/related/berkeleydb.html) library.
 * Btrees are efficient in retrieving values from given keys. Both keys and values are stored in bytes objects.
 * Python datatypes like: **int, float, str, list, tuple, set, dict, bytes, bytearray, bool** can be used both as keys and values for the database.
+* brainDB is compatible for both **python3** and **micropython**
+* Because brainDB package is compatible with python3, it is possible to create the database for later use in micropython versions of micro-controllers.
 ## Possible use cases:
 * Data Logging from sensors.
 * Storing Wifi credentials in ESP8266 / ESP32 boards.
-* Because brainDB is compatible with Unix systems, it is possible to use the Unix version of MicroPython to create the database for later use in micro-controller versions.
+
 * Can be used to store datasets efficiently for training Machine Learning models as well as storing weights, biases etc for using it in future predictions.
 * * *
 ## class brainDB / ubrainDB:
@@ -34,17 +36,18 @@ Run **install.sh**
 git clone https://github.com/schikani/brainDB.git
 cd brainDB && ./install.sh
 ```
-* The brainDB package works both with **MicroPython** and **Python3**. Notice the difference in importing the right module for micropython as **ubrainDB** and for python3 as **brainDB** in the example below.
+### Importing the right module
+* Notice the difference in importing the right module for micropython as **ubrainDB** and for python3 as **brainDB** in the example below.
 * All the functions are similar both in brainDB and ubrainDB
 
-> ### Python3
+> ## Python3
 ```python
 from db_scripts import brainDB as DB
 db2 = DB("database2")
 db.write(1, 89) # key, value to write
 
 ```
-> ### MicroPython
+> ## MicroPython
 ```python
 from db_scripts import ubrainDB as DB
 db1 = DB("database1")
