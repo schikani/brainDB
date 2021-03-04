@@ -16,7 +16,7 @@
 ## class brainDB / ubrainDB:
 |Use|Function
 |-|-|
-|Create a new database by giving it a name<br>The database file is created inside "DB" folder if it doesn't exist. The path can be changed in "brainDB.py"|`db = DB("someName")`<br>`db2 = DB("anotherName")`|
+|Create a new database by giving it a name<br>The database file is created inside "DB" folder if it doesn't exist. The path can be changed in "ubrainDB.py"|`db = DB("someName")`<br>`db2 = DB("anotherName")`|
 |Get the names of all the databases in a list|`db.databases()`|
 |Set verbose (default is set to 0)<br>If set to 1, it displays information while writing / removing in the database|`db.verbose(1)`|
 |Write key - value pairs to the current database. The first argument is key and second is value|`db.write({777}, 0.12)`<br>`db.write([1, 1, 0], 1)`<br>`db.write(0, "zero")`<br>`db.write("abc", "xyz")`<br>`db.write([0.1, 0.6, 0.8], 1)`|
