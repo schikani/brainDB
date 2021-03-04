@@ -1,0 +1,7 @@
+{
+  "COMMANDS": ["write", "read_by_key", "read_by_value",
+            "remove_by_key", "remove_by_value",
+            "keys", "keys_reverse", "keys_by_start", "keys_by_start_reverse",
+            "values", "values_reverse", "values_by_start", "values_by_start_reverse",
+            "items", "items_by_start", "databases", "close"]
+}
