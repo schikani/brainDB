@@ -16,7 +16,11 @@
 ## class brainDB / ubrainDB:
 |Use|Function
 |-|-|
+<<<<<<< HEAD
 |Create a new database by giving it a name<br>The database file is created inside "DB" folder if it doesn't exist. The path can be changed in "ubrainDB.py"|`db = DB("someName")`<br>`db2 = DB("anotherName")`|
+=======
+|Create a new database by giving it a name<br>The database file is created inside "DB" folder if it doesn't exist. The path can be changed in "brainDB.py"|`db = DB("someName")`<br>`db2 = DB("anotherName")`|
+>>>>>>> main
 |Get the names of all the databases in a list|`db.databases()`|
 |Set verbose (default is set to 0)<br>If set to 1, it displays information while writing / removing in the database|`db.verbose(1)`|
 |Write key - value pairs to the current database. The first argument is key and second is value|`db.write({777}, 0.12)`<br>`db.write([1, 1, 0], 1)`<br>`db.write(0, "zero")`<br>`db.write("abc", "xyz")`<br>`db.write([0.1, 0.6, 0.8], 1)`|
@@ -49,10 +53,16 @@ db.write(1, 89) # key, value to write
 ```
 > ## MicroPython
 ```python
+<<<<<<< HEAD
 from db_scripts import ubrainDB as DB
 db1 = DB("database1")
 db.write(0, 55)
 ```
+=======
+# ------------------------------------------------
+# Storing 2D / multi-dimensional Arrays
+# ------------------------------------------------
+>>>>>>> main
 
 * * *
 
@@ -75,15 +85,25 @@ labels = [1, 1, 0]
 for f, l in zip(features, labels):
     database1.write(f, l)
 
-
 features_with_label_one = database1.read(value=1)
 print(features_with_label_one)
 ```
 
+<<<<<<< HEAD
 * For ESP8266 /  ESP32 auto connections
 
 ```python
 from db_scripts import ubrainDB as DB
+=======
+database1.close()
+
+
+# ------------------------------------------------
+# For ESP8266 /  ESP32 auto connections
+# ------------------------------------------------
+
+from brainDB import brainDB as DB
+>>>>>>> main
 
 credentials = DB(".credentials")
 
@@ -95,35 +115,50 @@ credentials.write("ssid4", "password4")
 credentials.write("ssid45", "password45")
 credentials.write("ssid60", "password60")
 
+credentials.close()
 
 #  ----------Some time later--------------
 
-# Network connection 
+# Network connection
+
+import network
+from brainDB import brainDB as DB
+
 def do_connect():
+<<<<<<< HEAD
     from db_scripts import ubrainDB as DB
     import network
     
 	credentials = DB(".credentials")
 	
+=======
+  
+    credentials = DB("credentials")
+    
+>>>>>>> main
     sta_if = network.WLAN(network.STA_IF)
-	
+    
     if not sta_if.isconnected():
-		
+        
         # Get keys and values as bytes objects in a dictionary
-        dict_B = credentials.get_items()
-		
+        dict_B = credentials.items()
+        
         print('connecting to network...')
         sta_if.active(True)
-		
+        
         for netw in sta_if.scan():
             # catch ssid from index 0 and
-			# compare it with the dictionary keys
+            # compare it with the dictionary keys
             if netw[0] in dict_B.keys():
                 sta_if.connect(netw[0], dict_B[netw[0]])
-
+  
         while not sta_if.isconnected():
             pass
+        credentials.close()
         print('network config:', sta_if.ifconfig())
 do_connect()
 ```
+<<<<<<< HEAD
 * * *
+=======
+>>>>>>> main

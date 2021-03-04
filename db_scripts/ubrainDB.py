@@ -195,6 +195,11 @@ class ubrainDB:
         gc.collect()
         if reverse:
             keys.reverse()
+<<<<<<< HEAD:db_scripts/ubrainDB.py
+=======
+
+        return keys
+>>>>>>> main:brainDB.py
 
         return keys
 
@@ -227,6 +232,11 @@ class ubrainDB:
         gc.collect()
         if reverse:
             values.reverse()
+<<<<<<< HEAD:db_scripts/ubrainDB.py
+=======
+
+        return values
+>>>>>>> main:brainDB.py
 
         return values
 
