@@ -10,17 +10,12 @@
 ## Possible use cases:
 * Data Logging from sensors.
 * Storing Wifi credentials in ESP8266 / ESP32 boards.
-
 * Can be used to store datasets efficiently for training Machine Learning models as well as storing weights, biases etc for using it in future predictions.
 * * *
 ## class brainDB / ubrainDB:
 |Use|Function
 |-|-|
-<<<<<<< HEAD
 |Create a new database by giving it a name<br>The database file is created inside "DB" folder if it doesn't exist. The path can be changed in "ubrainDB.py"|`db = DB("someName")`<br>`db2 = DB("anotherName")`|
-=======
-|Create a new database by giving it a name<br>The database file is created inside "DB" folder if it doesn't exist. The path can be changed in "brainDB.py"|`db = DB("someName")`<br>`db2 = DB("anotherName")`|
->>>>>>> main
 |Get the names of all the databases in a list|`db.databases()`|
 |Set verbose (default is set to 0)<br>If set to 1, it displays information while writing / removing in the database|`db.verbose(1)`|
 |Write key - value pairs to the current database. The first argument is key and second is value|`db.write({777}, 0.12)`<br>`db.write([1, 1, 0], 1)`<br>`db.write(0, "zero")`<br>`db.write("abc", "xyz")`<br>`db.write([0.1, 0.6, 0.8], 1)`|
@@ -47,23 +42,16 @@ cd brainDB && ./install.sh
 > ## Python3
 ```python
 from db_scripts import brainDB as DB
-db2 = DB("database2")
-db.write(1, 89) # key, value to write
+db1 = DB("database1")
+db1.write(1, 89) # key, value to write
 
 ```
 > ## MicroPython
 ```python
-<<<<<<< HEAD
 from db_scripts import ubrainDB as DB
-db1 = DB("database1")
-db.write(0, 55)
+db2 = DB("database2")
+db2.write(0, 55)
 ```
-=======
-# ------------------------------------------------
-# Storing 2D / multi-dimensional Arrays
-# ------------------------------------------------
->>>>>>> main
-
 * * *
 
 ## Examples:
@@ -87,23 +75,12 @@ for f, l in zip(features, labels):
 
 features_with_label_one = database1.read(value=1)
 print(features_with_label_one)
+database1.close()
 ```
-
-<<<<<<< HEAD
 * For ESP8266 /  ESP32 auto connections
 
 ```python
 from db_scripts import ubrainDB as DB
-=======
-database1.close()
-
-
-# ------------------------------------------------
-# For ESP8266 /  ESP32 auto connections
-# ------------------------------------------------
-
-from brainDB import brainDB as DB
->>>>>>> main
 
 credentials = DB(".credentials")
 
@@ -121,21 +98,13 @@ credentials.close()
 
 # Network connection
 
-import network
-from brainDB import brainDB as DB
-
 def do_connect():
-<<<<<<< HEAD
+
     from db_scripts import ubrainDB as DB
     import network
-    
-	credentials = DB(".credentials")
-	
-=======
   
-    credentials = DB("credentials")
+    credentials = DB(".credentials")
     
->>>>>>> main
     sta_if = network.WLAN(network.STA_IF)
     
     if not sta_if.isconnected():
@@ -158,7 +127,5 @@ def do_connect():
         print('network config:', sta_if.ifconfig())
 do_connect()
 ```
-<<<<<<< HEAD
+
 * * *
-=======
->>>>>>> main
