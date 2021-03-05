@@ -1,7 +1,7 @@
 # ==========================================
-# Author: Shivang Chikani
-# Project: ubrainDB
-# Date:   23 Feb 2021
+# Author:    Shivang Chikani
+# Project:   ubrainDB
+# Date:      23 Feb 2021
 # ==========================================
 
 import uos
@@ -11,9 +11,6 @@ import gc
 
 # Set a name for the database folder.
 DB_FOLDER = "./DB"
-
-# All the names of different databases are stored in this file
-DB_NAMES = ".databases"
 
 # Try to make the database folder if it doesn't exist.
 try:
@@ -27,29 +24,30 @@ except OSError as exc:
 class ubrainDB:
 
     def __init__(self, name):
+        self.name = name
         gc.collect()
-        self._name = name
+        # Define the extension for database
+        if not name.endswith(".brain"):
+            self.name = name + ".brain"
+
         self._verbose = 0
+        self._notClosed = True
+        self._db = None
+
         self._initialize()
 
     # This function will try to open the database and save it's name
-    # in DB_NAMES file
     def _initialize(self):
-        try:
-            self._db_names_stream = open("{}/{}".format(DB_FOLDER, DB_NAMES), "r+b")
-        except OSError:
-            self._db_names_stream = open("{}/{}".format(DB_FOLDER, DB_NAMES), "w+b")
+        if self._notClosed:
+            try:
+                self._stream = open("{}/{}".format(DB_FOLDER, self.name), "r+b")
+            except OSError:
+                self._stream = open("{}/{}".format(DB_FOLDER, self.name), "w+b")
 
-        self._db_names = btree.open(self._db_names_stream)
-        self._db_names[str(self._name).encode()] = str(self._name).encode()
-        self._db_names.flush()
+            self._db = btree.open(self._stream)
 
-        try:
-            self._stream = open("{}/{}".format(DB_FOLDER, self._name), "r+b")
-        except OSError:
-            self._stream = open("{}/{}".format(DB_FOLDER, self._name), "w+b")
-
-        self._db = btree.open(self._stream)
+        else:
+            return "Database => '{}' is closed.".format(self.name)
 
     # verbose can be set to 1 for displaying writing / deleting messages.
     def verbose(self, value):
@@ -61,19 +59,25 @@ class ubrainDB:
 
     # This function takes the key and value to be written in the current database.
     def write(self, key, value):
+
         gc.collect()
+
         try:
+            display = ""
             if self._db is not None:
+                if self._verbose == 1:
+                    display = "Writing to => {0} | Key => {1} |" \
+                              " Value => {2}" \
+                        .format(self.name, type(key), type(value))
+
                 self._db[str(key).encode()] = str(value).encode()
                 self._db.flush()
 
-                if self._verbose == 1:
-                    return "Writing to> Database: {} | Type: {} | Key: {}" \
-                        .format(self._name, type(value), key)
+                return display
 
         except OSError:
             self._db.flush()
-            return "Something went wrong while writing to> {}".format(self._name)
+            return "Something went wrong while writing to: {}".format(self.name)
 
     # This function returns the data given it's key or value from the current database.
     # If a key is given as parameter, it returns value and if value is given as parameter,
@@ -118,22 +122,25 @@ class ubrainDB:
                             keys.append(key_.decode())
 
                 if len(keys) == 0:
-                    return "No keys found with Value> {}".format(value)
+                    return "No keys found with Value => {}".format(type(value))
 
                 else:
                     return keys
 
         except OSError:
-            return "Can't read from file> {}".format(self._name)
+            return "Can't read from Database => {} ".format(self.name)
 
     # Remove key-value pair/s given the key or value as the parameter
     def remove(self, key=None, value=None):
+        display = ""
         if key is not None:
             try:
+                if self._verbose == 1:
+                    display = "Removing Key => {}".format(type(key))
                 del self._db[str(key).encode()]
                 self._db.flush()
-                if self._verbose == 1:
-                    return "Removing Key> {}".format(key)
+
+                return display
 
             except KeyError:
                 return "Invalid key!"
@@ -145,27 +152,28 @@ class ubrainDB:
             for key_, value_ in self._db.items():
                 if value_ == str(value).encode():
                     key_found = 1
-                    del self._db[key_]
-                    self._db.flush()
 
                     if self._verbose == 1:
                         try:
-                            return "Removing> Key: {} | Given Value: {}".format(eval(key_), value)
-
+                            k = eval(key_)
                         except NameError:
-                            return "Removing> Key: {} | Given Value: {}".format(key_.decode(), value)
-
+                            k = key_.decode()
                         except SyntaxError:
-                            return "Removing> Key: {} | Given Value: {}".format(key_.decode(), value)
+                            k = key_.decode()
+                        display = "Removing Key => {} | By Value => {}".format(type(k), type(value))
+
+                    del self._db[key_]
+                    self._db.flush()
 
             gc.collect()
 
             if key_found == 0:
-                return "No keys found with Value> {}".format(value)
-
+                return "No keys found with Value => {}".format(type(value))
+            else:
+                return display
 
         else:
-            return "Enter a key or value to remove key-value pair/s."
+            return "Enter a key or value to remove key-value pair/s"
 
     # Iterate over sorted keys in the database getting sorted keys in a list
     # If key is given as start_key parameter, the keys after the key (including the given key)
@@ -240,32 +248,60 @@ class ubrainDB:
         if start_key is not None:
             for k, v in self._db.items(str(start_key).encode()):
                 items[k] = v
-
         else:
             for k, v in self._db.items():
                 items[k] = v
 
         return items
 
-    # Return a list of all the databases
+    # Get a list of all the databases including the currently open
     def databases(self):
 
-        databases = []
-
-        for d in self._db_names:
-            databases.append(d.decode())
+        databases = [
+            i[0][:i[0].rindex(".brain")]
+            for i in uos.ilistdir(DB_FOLDER)
+            if i[0].endswith(".brain")
+        ]
 
         gc.collect()
         return databases
 
+    # Remove a database by it's name
+    # If it is the current database, it will get erased.
+    # In order to completely remove the current Database,
+    # this function should be called by the instance of
+    # another Database
+    def remove_database(self, name):
+        name_ = name
+
+        if not name_.endswith(".brain"):
+            name_ = name + ".brain"
+
+        try:
+            display = ""
+
+            if name_ == self.name:
+                display = "Erasing current database => '{}' ".format(name_)
+                with open("{}/{}".format(DB_FOLDER, name_), "w") as erase:
+                    erase.close()
+                self._initialize()
+
+            elif name_ != self.name:
+                display = "Removing Database => '{}' ".format(name_)
+                uos.remove("{}/{}".format(DB_FOLDER, name_))
+
+            if self._verbose == 1:
+                return display
+
+        except OSError:
+            return "Database => '{}' not found".format(name_)
+
     # This function helps in closing the current stream.
     # After calling this function, calling read() / write() functions will cause an OSError
     # Only call this function after all the reading and writing is finished for the current database.
-    def close(self, state=None):
-        if state == 1 or state is None:
-            self._db.close()
-            self._stream.close()
-            self._db_names.close()
-            self._db_names_stream.close()
-        if self._verbose == 1 and state == 1 or self._verbose == 1 and state is None:
-            return "Database {} closed.".format(self._name)
+    def close(self):
+        self._notClosed = False
+        self._db.close()
+        self._stream.close()
+        if self._verbose == 1:
+            return self._initialize()
