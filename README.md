@@ -9,8 +9,8 @@
 * Because of this compatibility, it is possible to create the database in native system python for later use in micropython versions of micro-controllers. 
 
 ## Easy of use:
-`db = DB("databaseName")`
-`db.write(key, value)`
+`db = DB("databaseName")`<br>
+`db.write(key, value)`<br>
 `db.read(key)` OR `db.read(value=value)`
 
 ## Possible use cases:
