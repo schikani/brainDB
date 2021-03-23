@@ -1,16 +1,23 @@
-# brainDB (beta)
+# brainDB
 ![alt text](https://github.com/schikani/brainDB/blob/main/brainDB.png)
 
 ## About:
 * This project is based on the btree module from [MicroPython](https://github.com/micropython/micropython) which is based on [BerkelyDB](https://www.oracle.com/database/technologies/related/berkeleydb.html) library.
 * Btrees are efficient in retrieving values from given keys. Both keys and values are stored in bytes objects.
 * Python datatypes like: **int, float, str, list, tuple, set, dict, bytes, bytearray, bool** can be used both as keys and values for the database.
-* brainDB is compatible for both **python3** and **micropython**
-* Because brainDB package is compatible with python3, it is possible to create the database for later use in micropython versions of micro-controllers.
+* brainDB is compatible with both **cpython** and **micropython**
+* Because of this compatibility, it is possible to create the database in native system python for later use in micropython versions of micro-controllers. 
+
+## Easy of use:
+`db = DB("databaseName")`
+`db.write(key, value)`
+`db.read(key)` OR `db.read(value=value)`
+
 ## Possible use cases:
 * Data Logging from sensors.
 * Storing Wifi credentials in ESP8266 / ESP32 boards.
 * Can be used to store datasets efficiently for training Machine Learning models as well as storing weights, biases etc for using it in future predictions.
+* Everywhere when data needs to be stored and accessed by key
 * * *
 ## class brainDB / ubrainDB:
 |Use|Function
@@ -24,22 +31,25 @@
 |Get sorted keys (Optionally from specified key)<br>Also reverse can be set to True to get the list in reverse order|`db.keys()`<br>`db.keys("abc")`<br>`db.keys("abc", reverse=True)`|
 |Get sorted values (Optionally from specified key)<br>Also reverse can be set to True to get the list in reverse order|`db.values()`<br>`db.values([1, 1, 0])`<br>`db.values([1, 1, 0], reverse=True)`|
 |Get a dictionary with key - value pairs as bytes objects (Optionally from specified key)|`db.items()`|
-|Close the current database<br>Methods will not work after invoking this function|`db.close()`|
+|Remove a database by it's name. If the current database is selected, it will be erased of all items.|`db.remove_database("someName")`|
+|Close the current database<br>Read / Write methods will not work after invoking this function|`db.close()`|
+|It reopens a database after it was closed<br>Read / Write methods will work again |`db.reopen()`|
 * * *
-## Compatibility with **Python3**
-* When brainDB is called in python3, it is envoking ubrainDB from micropython version of **unix** to read / write to our database. Basically brainDB uses **subprocess** module to communicate with ubrainDB
+## Compatibility with **CPython**
+* As I started working on brainDB, it was written only for micropython. But with the help of subprocess module, I made a wrapper around MicroPython to use the script in CPython.
+* When brainDB is called in cpython, it is envoking ubrainDB from micropython version of **unix** to read / write to our database. Basically brainDB uses **subprocess** module to communicate with ubrainDB
 
-### Requirements for Python3 (UNIX)
+### Requirements for CPython (UNIX)
 Run **install.sh**
 ```shell
 git clone https://github.com/schikani/brainDB.git
 cd brainDB && ./install.sh
 ```
 ### Importing the right module
-* Notice the difference in importing the right module for micropython as **ubrainDB** and for python3 as **brainDB** in the example below.
+* Notice the difference in importing the right module for micropython as **ubrainDB** and for cpython as **brainDB** in the example below.
 * All the functions are similar both in brainDB and ubrainDB
 
-> ## Python3
+> ## CPython
 ```python
 from db_scripts import brainDB as DB
 db1 = DB("database1")
@@ -129,3 +139,4 @@ do_connect()
 ```
 
 * * *
+

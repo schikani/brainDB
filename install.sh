@@ -1,10 +1,19 @@
+#!/bin/bash
 
+# Install necessary building tools
 sudo apt-get install build-essential libreadline-dev libffi-dev git
 pkg-config gcc-arm-none-eabi libnewlib-arm-none-eabi
 
-git clone https://github.com/micropython/micropython.git ./db_scripts/upython
+# Clone micropython
+git clone https://github.com/micropython/micropython.git upython
 
-cd ./db_scripts/upython/mpy-cross && make
+# Build micropython and making it available from everwhere
+cd upython/mpy-cross && make
 cd ../ports/unix
 make submodules && make
-cp micropython ../../../
+mkdir $HOME/bin
+mv micropython $HOME/bin/micropython
+sudo echo 'export PATH=$PATH":$HOME/bin"' >> $HOME/.bashrc
+cd ../../../
+sudo rm -r upython
+source $HOME/.bashrc

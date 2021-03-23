@@ -1,11 +1,15 @@
 # ==========================================
-# Author:    Shivang Chikani
 # Project:   brainDB
+# Author:    Shivang Chikani
 # Date:      02 Mar 2021
 # ==========================================
 
-# NOTE: This script needs to have micropython executable in db_scripts folder.
-#       If it is not there, run install.sh from the root
+# This script needs to have micropython available system-wide.
+# If it is not available, run install.sh from the root (brainDB)
+# It will clone micropython and compile the binaries.
+# Module subprocess comes to our rescue and enables us to talk to micropython
+# from python3.
+
 
 import subprocess
 
@@ -17,146 +21,185 @@ class brainDB:
         self._verbose = 0
         self._notClosed = True
 
-    # This function will invoke ubrainDB from micropyton for reading / writing into the database
+    # This function will invoke ubrainDB from micropyton for reading / writing into the database.
     def _initialize(self, command=None):
-        if self._notClosed:
-            talk = subprocess.Popen(
-                ["./db_scripts/micropython", "-c",
-                 f"from db_scripts.ubrainDB import ubrainDB as DB; \
-                db = DB('{self.name}'); db.verbose({self._verbose}); \
-                print(db.{command})"],
+        talk = subprocess.Popen(
+            ["micropython", "-c",
+             f"from db_scripts.ubrainDB import ubrainDB as DB; \
+            db = DB('{self.name}'); db.verbose({self._verbose}); \
+            print(db.{command})"],
 
-                stdout=subprocess.PIPE)
+            stdout=subprocess.PIPE)
 
-            output = talk.communicate()[0]
+        output = talk.communicate()[0]
 
-            try:
-                output = eval(output.strip(b"\n").decode())
-            except NameError:
-                output = output.strip(b"\n").decode()
-            except SyntaxError:
-                output = output.strip(b"\n").decode()
+        try:
+            output = eval(output.strip(b"\n").decode())
+        except NameError:
+            output = output.strip(b"\n").decode()
+        except SyntaxError:
+            output = output.strip(b"\n").decode()
 
-            return output
+        return output
 
-        else:
-            return "Database => '{}' is closed.".format(self.name)
+    # This function helps in displaying the message when database is closed.
+    def _close_message(self):
+        return "Database => '{}' is closed. Use reopen() to open the database again".format(self.name)
 
-    # verbose can be set to 1 for displaying writing / deleting messages.
+    # This function helps in re-opening the database after it is closed.
+    def reopen(self):
+        self._notClosed = True
+
+    # Verbose can be set to 1 for displaying writing / deleting messages.
     def verbose(self, value):
-        if value >= 1:
-            self._verbose = 1
+        if self._notClosed:
+            if value >= 1:
+                self._verbose = 1
 
+            else:
+                self._verbose = 0
         else:
-            self._verbose = 0
+            return self._close_message()
 
     # This function takes the key and value to be written in the current database.
     def write(self, key, value):
 
-        if isinstance(key, str):
-            key = f"'{key}'"
+        if self._notClosed:
 
-        if isinstance(value, str):
-            value = f"'{value}'"
+            if isinstance(key, str):
+                key = f"'{key}'"
 
-        message = self._initialize(f"write({key}, {value})")
-        return message
+            if isinstance(value, str):
+                value = f"'{value}'"
+
+            message = self._initialize(f"write({key}, {value})")
+            return message
+
+        else:
+            return self._close_message()
 
     # This function returns the data given it's key or value from the current database.
     # If a key is given as parameter, it returns value and if value is given as parameter,
     # a list of keys is returned
     def read(self, key=None, value=None):
 
-        message = ""
+        if self._notClosed:
 
-        if isinstance(key, str):
-            key = f"'{key}'"
+            message = ""
 
-        if isinstance(value, str):
-            value = f"'{value}'"
+            if isinstance(key, str):
+                key = f"'{key}'"
 
-        if key is not None:
-            message = self._initialize(f"read({key})")
-        elif value is not None:
-            message = self._initialize(f"read(value = {value})")
+            if isinstance(value, str):
+                value = f"'{value}'"
 
-        return message
+            if key is not None:
+                message = self._initialize(f"read({key})")
+            elif value is not None:
+                message = self._initialize(f"read(value = {value})")
 
-    # Remove key-value pair/s given the key or value as the parameter
-    def remove(self, key=None, value=None):
-
-        message = ""
-
-        if isinstance(key, str):
-            key = f"'{key}'"
-
-        if isinstance(value, str):
-            value = f"'{value}'"
-
-        if key is not None:
-            message = self._initialize(f"remove({key})")
-        elif value is not None:
-            message = self._initialize(f"remove(value = {value})")
-
-        return message
-
-    # Iterate over sorted keys in the database getting sorted keys in a list
-    # If key is given as start_key parameter, the keys after the key (including the given key)
-    # to the end of database is returned as a sorted list
-    # if reverse is set True, the list is returned in reverse order
-    def keys(self, start_key=None, reverse=False):
-        message = ""
-        if isinstance(start_key, str):
-            start_key = f"'{start_key}'"
-
-        if start_key is None and reverse is False:
-            message = self._initialize("keys()")
-        elif start_key is None and reverse:
-            message = self._initialize("keys(reverse = True)")
-        elif start_key is not None and reverse is False:
-            message = self._initialize(f"keys({start_key})")
-        elif start_key is not None and reverse:
-            message = self._initialize(f"keys({start_key}, reverse = True)")
-
-        return message
-
-    # Iterate over sorted keys in the database getting sorted values in a list
-    # If key is given as start_key parameter, the values after the value (including the value of given key)
-    # to the end of database is returned as a sorted list
-    # if reverse is set True, the list is returned in reverse order
-    def values(self, start_key=None, reverse=False):
-        message = ""
-        if isinstance(start_key, str):
-            start_key = f"'{start_key}'"
-
-        if start_key is None and reverse is False:
-            message = self._initialize("values()")
-        elif start_key is None and reverse:
-            message = self._initialize("values(reverse = True)")
-        elif start_key is not None and reverse is False:
-            message = self._initialize(f"values({start_key})")
-        elif start_key is not None and reverse:
-            message = self._initialize(f"values({start_key}, reverse = True)")
-
-        return message
-
-    # Get all encoded key - value pairs in a dictionary.
-    # Optionally start_key param accepts a key
-    # The keys and values are stored as bytes objects
-    def items(self, start_key=None):
-
-        if isinstance(start_key, str):
-            start_key = f"'{start_key}'"
-
-        if start_key is None:
-            message = self._initialize("items()")
+            return message
 
         else:
-            message = self._initialize(f"items({start_key})")
+            return self._close_message()
 
-        return message
+    # Remove key-value pair/s given the key or value as the parameter.
+    def remove(self, key=None, value=None):
 
-    # Get a list of all the databases including the currently open
+        if self._notClosed:
+
+            message = ""
+
+            if isinstance(key, str):
+                key = f"'{key}'"
+
+            if isinstance(value, str):
+                value = f"'{value}'"
+
+            if key is not None:
+                message = self._initialize(f"remove({key})")
+            elif value is not None:
+                message = self._initialize(f"remove(value = {value})")
+
+            return message
+
+        else:
+            return self._close_message()
+
+    # Iterate over sorted keys in the database getting sorted keys in a list.
+    # If key is given as start_key parameter, the keys after the key (including the given key)
+    # to the end of database is returned as a sorted list.
+    # If reverse is set True, the list is returned in reverse order.
+    def keys(self, start_key=None, reverse=False):
+
+        if self._notClosed:
+
+            message = ""
+            if isinstance(start_key, str):
+                start_key = f"'{start_key}'"
+
+            if start_key is None and reverse is False:
+                message = self._initialize("keys()")
+            elif start_key is None and reverse:
+                message = self._initialize("keys(reverse = True)")
+            elif start_key is not None and reverse is False:
+                message = self._initialize(f"keys({start_key})")
+            elif start_key is not None and reverse:
+                message = self._initialize(f"keys({start_key}, reverse = True)")
+
+            return message
+
+        else:
+            return self._close_message()
+
+    # Iterate over sorted keys in the database getting sorted values in a list.
+    # If key is given as start_key parameter, the values after the value (including the value of given key)
+    # to the end of database is returned as a sorted list.
+    # if reverse is set True, the list is returned in reverse order.
+    def values(self, start_key=None, reverse=False):
+
+        if self._notClosed:
+
+            message = ""
+            if isinstance(start_key, str):
+                start_key = f"'{start_key}'"
+
+            if start_key is None and reverse is False:
+                message = self._initialize("values()")
+            elif start_key is None and reverse:
+                message = self._initialize("values(reverse = True)")
+            elif start_key is not None and reverse is False:
+                message = self._initialize(f"values({start_key})")
+            elif start_key is not None and reverse:
+                message = self._initialize(f"values({start_key}, reverse = True)")
+
+            return message
+
+        else:
+            return self._close_message()
+
+    # Get all encoded key - value pairs in a dictionary.
+    # Optionally start_key param accepts a key.
+    # The keys and values are stored as bytes objects.
+    def items(self, start_key=None):
+
+        if self._notClosed:
+
+            if isinstance(start_key, str):
+                start_key = f"'{start_key}'"
+
+            if start_key is None:
+                message = self._initialize("items()")
+
+            else:
+                message = self._initialize(f"items({start_key})")
+
+            return message
+
+        else:
+            return self._close_message()
+
+    # Get a list of all the databases including the currently open.
     def databases(self):
         message = self._initialize("databases()")
         return message
@@ -165,15 +208,15 @@ class brainDB:
     # If it is the current database, it will get erased.
     # In order to completely remove the current Database,
     # this function should be called by the instance of
-    # another Database
+    # another Database.
     def remove_database(self, name):
         message = self._initialize(f"remove_database('{name}')")
         return message
 
     # This function helps in closing the current stream.
-    # After calling this function, calling read() / write() functions will cause an OSError
-    # Only call this function after all the reading and writing is finished for the current database.
+    # After calling this function, reading / writing  will not work.
+    # In order to read / write again to the current instance, call reopen().
     def close(self):
         self._notClosed = False
         if self._verbose == 1:
-            return self._initialize()
+            return self._close_message()
