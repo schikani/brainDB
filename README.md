@@ -5,6 +5,7 @@
 * This project is based on the btree module from [MicroPython](https://github.com/micropython/micropython) which is based on [BerkelyDB](https://www.oracle.com/database/technologies/related/berkeleydb.html) library.
 * Btrees are efficient in retrieving values from given keys. Both keys and values are stored in bytes objects.
 * Python datatypes like: **int, float, str, list, tuple, set, dict, bytes, bytearray, bool** can be used both as keys and values for the database.
+<<<<<<< HEAD
 * brainDB is compatible with both **cpython** and **micropython**
 * Because of this compatibility, it is possible to create the database in native system python for later use in micropython versions of micro-controllers. 
 
@@ -13,6 +14,10 @@
 `db.write(key, value)`
 `db.read(key)` OR `db.read(value=value)`
 
+=======
+* brainDB is compatible with **python3** and **micropython**
+* Because brainDB package is compatible with python3, it is possible to create the database for later use in micropython versions of micro-controllers.
+>>>>>>> 8b2c7fe355c908bcae568202b945202cbd806b08
 ## Possible use cases:
 * Data Logging from sensors.
 * Storing Wifi credentials in ESP8266 / ESP32 boards.
